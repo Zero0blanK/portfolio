@@ -11,12 +11,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import type { ProjectData } from '@/lib/project-data';
+import type { MiniProjectData } from '@/lib/project-mini-data';
 
 type LightboxState = { images: string[]; index: number } | null;
 
 type ProjectDetailDialogProps = {
   projectId: string | null;
-  projects: ProjectData[];
+  projects: (ProjectData | MiniProjectData)[];
   onClose: () => void;
 };
 
@@ -160,7 +161,9 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
               <DialogHeader>
                 <div className="mb-2 flex items-center gap-2">
                   <span className="pill-chip">{activeProject.year}</span>
-                  <span className="pill-chip">{activeProject.role}</span>
+                  {'role' in activeProject && (
+                    <span className="pill-chip">{activeProject.role}</span>
+                  )}
                 </div>
                 <DialogTitle className="text-2xl">{activeProject.title}</DialogTitle>
                 <DialogDescription className="text-sm leading-relaxed">
@@ -188,7 +191,7 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
                     Key responsibilities
                   </h4>
                   <ul className="mt-2 space-y-2">
-                    {activeProject.responsibilities.map((r) => (
+                    {'responsibilities' in activeProject && activeProject.responsibilities.map((r) => (
                       <li key={r} className="flex items-start gap-2 text-sm text-foreground/90">
                         <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
                         {r}
@@ -202,13 +205,17 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
                     <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                       Challenge
                     </p>
-                    <p className="mt-1 text-sm text-foreground/90">{activeProject.challenge}</p>
+                    {'challenge' in activeProject && (
+                      <p className="mt-1 text-sm text-foreground/90">{activeProject.challenge}</p>
+                    )}
                   </div>
                   <div className="rounded-xl border border-border/70 bg-card/70 p-3">
                     <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                       Solution
                     </p>
-                    <p className="mt-1 text-sm text-foreground/90">{activeProject.solution}</p>
+                    {'solution' in activeProject && (
+                      <p className="mt-1 text-sm text-foreground/90">{activeProject.solution}</p>
+                    )}
                   </div>
                 </div>
 
@@ -264,7 +271,7 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
         }}
       >
         <DialogContent
-          className="flex max-w-[70vw] min-h-[80vh] flex-col items-center gap-4 border-0 bg-transparent p-4 shadow-none sm:max-w-[70vw] text-foreground"
+          className="flex max-w-[95vw] sm:max-w-[70vw] min-h-[50vh] sm:min-h-[80vh] flex-col items-center gap-2 sm:gap-4 border-0 bg-transparent p-2 sm:p-4 shadow-none text-foreground"
           showCloseButton={false}
         >
           <DialogTitle className="sr-only">
@@ -274,19 +281,19 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
 
           {lightbox && (
             <>
-              <div className="relative flex w-fit min-h-190 top-11.5 items-center justify-center overflow-hidden rounded-lg bg-black/60 p-2">
+              <div className="relative flex w-full sm:w-fit min-h-[40vh] sm:min-h-190 top-6 sm:top-11.5 items-center justify-center overflow-hidden rounded-lg bg-black/60 p-1 sm:p-2">
                 <Image
                   key={lightbox.images[lightbox.index]}
                   src={lightbox.images[lightbox.index]}
                   alt={`Screenshot ${lightbox.index + 1}`}
                   width={1200}
                   height={800}
-                  className="object-contain"
+                  className="object-contain max-h-[60vh] sm:max-h-none w-auto"
                 />
               </div>
 
               {lightbox.images.length > 1 && (
-                <div className="absolute inset-0 flex items-center justify-between gap-4 px-12">
+                <div className="absolute inset-0 flex items-center justify-between gap-2 sm:gap-4 px-1 sm:px-12">
                   <div
                     className="flex items-center gap-2 h-full group cursor-pointer"
                     onClick={lightboxPrev}
@@ -294,23 +301,23 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
                     <button
                       type="button"
                       aria-label="Previous image"
-                      className="flex h-12 w-12 items-center justify-center rounded-full text-foreground transition-colors bg-background/50 hover:bg-background/80 group-hover:bg-background/80 cursor-pointer"
+                      className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full text-foreground transition-colors bg-background/60 sm:bg-background/50 hover:bg-background/80 group-hover:bg-background/80 cursor-pointer"
                     >
-                      <ChevronLeft className="h-8 w-8" />
+                      <ChevronLeft className="h-5 w-5 sm:h-8 sm:w-8" />
                     </button>
                   </div>
 
-                  <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 flex gap-1.5 bg-background/80 px-4 py-2 rounded-lg">
+                  <div className="absolute bottom-10 sm:bottom-16 left-1/2 transform -translate-x-1/2 flex gap-1 sm:gap-1.5 bg-background/80 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg">
                     {lightbox.images.map((_, i) => (
                       <button
                         key={i}
                         type="button"
                         aria-label={`Go to image ${i + 1}`}
                         onClick={() => setLightbox((lb) => (lb ? { ...lb, index: i } : null))}
-                        className={`h-2 rounded-full transition-all duration-200 ${
+                        className={`h-1.5 sm:h-2 rounded-full transition-all duration-200 ${
                           i === lightbox.index
-                            ? 'w-6 bg-foreground'
-                            : 'w-2 bg-foreground/40 hover:bg-foreground/70'
+                            ? 'w-4 sm:w-6 bg-foreground'
+                            : 'w-1.5 sm:w-2 bg-foreground/40 hover:bg-foreground/70'
                         }`}
                       />
                     ))}
@@ -322,15 +329,15 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
                     <button
                       type="button"
                       aria-label="Next image"
-                      className="flex h-12 w-12 items-center justify-center rounded-full text-foreground transition-colors bg-background/50 hover:bg-background/80 group-hover:bg-background/80 cursor-pointer"
+                      className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full text-foreground transition-colors bg-background/60 sm:bg-background/50 hover:bg-background/80 group-hover:bg-background/80 cursor-pointer"
                     >
-                      <ChevronRight className="h-8 w-8" />
+                      <ChevronRight className="h-5 w-5 sm:h-8 sm:w-8" />
                     </button>
                   </div>
                 </div>
               )}
 
-              <p className="text-xs font-semibold text-foreground/50">
+              <p className="text-[10px] sm:text-xs font-semibold text-foreground/50">
                 {lightbox.index + 1} / {lightbox.images.length}
               </p>
             </>

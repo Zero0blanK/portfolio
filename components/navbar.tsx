@@ -12,12 +12,22 @@ export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string>('');
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch by rendering nothing until after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Track scroll state for navbar blur/shadow
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 18);
+
+      if (window.scrollY < 280) {
+        setActiveSection(null);
+      }
     };
     handleScroll();
     window.addEventListener('scroll', handleScroll);
@@ -38,10 +48,10 @@ export function Navbar() {
 
   // Track active section via IntersectionObserver (works for both scroll directions)
   useEffect(() => {
-    const sectionIds = ['about', 'work', 'contact'];
+    const sectionIds = ['home', 'about', 'work', 'contact'];
     const observers: IntersectionObserver[] = [];
 
-    sectionIds.forEach((id, idx) => {
+    sectionIds.forEach((id) => {
       const el = document.getElementById(id);
       if (!el) return;
 
@@ -49,13 +59,10 @@ export function Navbar() {
         ([entry]) => {
           if (entry.isIntersecting) {
             setActiveSection(`#${id}`);
-          } else if (entry.boundingClientRect.top > 0) {
-            const prevId = sectionIds[idx - 1];
-            setActiveSection(prevId ? `#${prevId}` : '');
           }
         },
         {
-          rootMargin: '-50% 0px -50% 0px',
+          rootMargin: '-55% 0px -45% 0px',
           threshold: 0,
         }
       );
@@ -124,6 +131,8 @@ export function Navbar() {
       transition: { duration: 0.2 },
     },
   };
+
+  if (!mounted) return null;
 
   return (
     <>

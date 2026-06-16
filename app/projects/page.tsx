@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { ProjectCard } from '@/components/project-card';
 import { ProjectDetailDialog } from '@/components/project-detail-dialog';
 import { projectCatalog } from '@/lib/project-data';
+import { miniCatalog } from '@/lib/project-mini-data';
 
 export default function ProjectsPage() {
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
@@ -51,9 +52,6 @@ export default function ProjectsPage() {
             </Link>
             <span className="section-label mt-6 w-fit">Project archive</span>
             <h1 className="section-title">A broader look at my recent product work.</h1>
-            <p className="section-copy">
-              Compact image-first cards with explicit modal actions for a cleaner UX flow.
-            </p>
           </motion.div>
 
           <motion.div
@@ -72,7 +70,28 @@ export default function ProjectsPage() {
               </motion.div>
             ))}
           </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+            viewport={{ once: true }}
+            className="mt-20"
+          >
+            <span className="section-label">Mini experiments</span>
+            <h2 className="section-title">Small builds while learning fundamentals</h2>
 
+            <div className="mt-6 grid gap-3 sm:grid-cols-3 xl:grid-cols-4">
+              {miniCatalog.map((miniProject) => (
+                <ProjectCard
+                  key={miniProject.id}
+                  project={miniProject}
+                  onViewDetails={openProject}
+                  onExpandImage={openLightboxFromCard}
+                  variant="compact"
+                />
+              ))}
+            </div>
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -95,7 +114,7 @@ export default function ProjectsPage() {
 
       <ProjectDetailDialog
         projectId={activeProjectId}
-        projects={projectCatalog}
+        projects={[...projectCatalog, ...miniCatalog]}
         onClose={() => setActiveProjectId(null)}
       />
     </main>

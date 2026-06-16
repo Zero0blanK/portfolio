@@ -4,17 +4,20 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, ExternalLink, Github, Maximize2 } from 'lucide-react';
 import type { ProjectData } from '@/lib/project-data';
+import type { MiniProjectData } from '@/lib/project-mini-data';
 
 type ProjectCardProps = {
-  project: ProjectData;
+  project: ProjectData | MiniProjectData;
   onViewDetails: (projectId: string) => void;
   onExpandImage?: (projectId: string, imageIndex: number) => void;
+  variant?: 'default' | 'compact';
 };
 
-export function ProjectCard({ project, onViewDetails, onExpandImage }: ProjectCardProps) {
+export function ProjectCard({ project, onViewDetails, onExpandImage, variant = 'default' }: ProjectCardProps) {
   const images = project.images;
   const [imageIndex, setImageIndex] = useState(0);
   const hasMultiple = images.length > 1;
+  const isCompact = variant === 'compact';
 
   function prev(e: React.MouseEvent) {
     e.stopPropagation();
@@ -42,10 +45,10 @@ export function ProjectCard({ project, onViewDetails, onExpandImage }: ProjectCa
           onViewDetails(project.id);
         }
       }}
-      className="surface-card flex h-full cursor-pointer flex-col overflow-hidden transition-colors hover:bg-card"
+      className={`surface-card h-full flex cursor-pointer flex-col overflow-hidden transition-colors hover:bg-card`}
     >
       {/* ── Image area ── */}
-      <div className="group relative h-60 border-b border-border/70">
+      <div className={`group relative ${!isCompact ? 'h-48' : 'h-60'} border-b border-border/70`}>
         <Image
           src={images[imageIndex]}
           alt={`${project.title} screenshot ${imageIndex + 1}`}
@@ -55,9 +58,11 @@ export function ProjectCard({ project, onViewDetails, onExpandImage }: ProjectCa
         <div className="absolute inset-0 bg-black/20" />
 
         {/* Role badge */}
-        <div className="absolute left-3 top-3 inline-flex items-center rounded-md border border-white/35 bg-black/40 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
-          {project.role}
-        </div>
+        {'role' in project && (
+          <div className="absolute left-3 top-3 inline-flex items-center rounded-md border border-white/35 bg-black/40 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
+            {project.role}
+          </div>
+        )}
 
         {/* Year badge */}
         <div className="absolute right-3 top-3 pill-chip border-white/35 bg-black/45 text-white">
@@ -116,16 +121,17 @@ export function ProjectCard({ project, onViewDetails, onExpandImage }: ProjectCa
 
       {/* ── Card body ── */}
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="text-lg font-semibold text-foreground">{project.title}</h3>
+        <h3 className={`${!isCompact ? 'text-lg' : 'text-base'} font-semibold text-foreground`}>{project.title}</h3>
         <p className="mt-1 text-sm text-muted-foreground">{project.subtitle}</p>
 
-        <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-foreground/90">
+        <p className={`${!isCompact ? 'mt-3' : 'mt-1'} line-clamp-2 text-sm leading-relaxed text-foreground/90`}>
           {project.description}
         </p>
-
-        <p className="mt-3 text-sm font-medium text-muted-foreground">
-          Impact: <span className="text-foreground">{project.impact}</span>
-        </p>
+        {!isCompact && 'impact' in project && (
+          <p className="mt-3 text-sm font-medium text-muted-foreground">
+            Impact: <span className="text-foreground">{project.impact}</span>
+          </p>
+        )}
 
         <div className="mt-3 flex flex-wrap gap-2">
           {project.tags.slice(0, 5).map((tag) => (
