@@ -3,87 +3,106 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ══════════════════════════════════════════════════════════════
+   HIGANBANA 彼岸花 — red spider lily
+   Two reds, never one: --wine is the petal base, --lily the tip.
+   --stem is the plant's real dusty sage. The ink is warm, never
+   neutral black — this flower grows out of soil, not out of a void.
+   ══════════════════════════════════════════════════════════════ */
+
 :root {
-  --background: #f5f7fc;
-  --foreground: #10172b;
-  --card: #ffffff;
-  --card-foreground: #10172b;
-  --popover: #ffffff;
-  --popover-foreground: #10172b;
-  --primary: #10172b;
-  --primary-foreground: #f8fbff;
-  --secondary: #ecf0f9;
-  --secondary-foreground: #10172b;
-  --muted: #d6deef;
-  --muted-foreground: #59637d;
-  --accent: #10172b;
-  --accent-foreground: #f8fbff;
-  --destructive: #cb3555;
+  /* Light — rice paper at dusk */
+  --background: #f2eae6;
+  --foreground: #1a0d10;
+  --card: #f9f4f1;
+  --card-foreground: #1a0d10;
+  --popover: #f9f4f1;
+  --popover-foreground: #1a0d10;
+  --primary: #a5122b;
+  --primary-foreground: #fdf7f5;
+  --secondary: #e8dcd7;
+  --secondary-foreground: #1a0d10;
+  --muted: #ded0ca;
+  --muted-foreground: #6d5157;
+  --accent: #e4304a;
+  --accent-foreground: #fdf7f5;
+  --destructive: #a5122b;
   --destructive-foreground: #ffffff;
-  --border: #dce4f3;
-  --input: #ffffff;
-  --ring: #4c67ff;
-  --chart-1: #4c67ff;
-  --chart-2: #64d4ff;
-  --chart-3: #8f87ff;
-  --chart-4: #52ad9c;
-  --chart-5: #e2a660;
-  --radius: 0.85rem;
-  --sidebar: #f8faff;
-  --sidebar-foreground: #10172b;
-  --sidebar-primary: #10172b;
-  --sidebar-primary-foreground: #f8fbff;
-  --sidebar-accent: #ecf0f9;
-  --sidebar-accent-foreground: #10172b;
-  --sidebar-border: #dce4f3;
-  --sidebar-ring: #4c67ff;
-  --brand: #5569ff;
-  --brand-soft: #a6b2ff;
-  --brand-contrast: #f8fbff;
+  --border: #dccdc7;
+  --input: #f9f4f1;
+  --ring: #c4162f;
+  --chart-1: #c4162f;
+  --chart-2: #7a0f22;
+  --chart-3: #e2513f;
+  --chart-4: #5f6d4e;
+  --chart-5: #c98a6b;
+  --radius: 0.25rem;
+  --sidebar: #f9f4f1;
+  --sidebar-foreground: #1a0d10;
+  --sidebar-primary: #a5122b;
+  --sidebar-primary-foreground: #fdf7f5;
+  --sidebar-accent: #e8dcd7;
+  --sidebar-accent-foreground: #1a0d10;
+  --sidebar-border: #dccdc7;
+  --sidebar-ring: #c4162f;
+
+  /* Higanbana palette */
+  --lily: #c4162f;
+  --wine: #7a0f22;
+  --ember: #e2513f;
+  --stem: #5f6d4e;
+  --ash: #6d5157;
 }
 
 .dark {
-  --background: #070b15;
-  --foreground: #ebefff;
-  --card: #11192b;
-  --card-foreground: #ebefff;
-  --popover: #11192b;
-  --popover-foreground: #ebefff;
-  --primary: #ebefff;
-  --primary-foreground: #0b1222;
-  --secondary: #1a253d;
-  --secondary-foreground: #ebefff;
-  --muted: #2a3655;
-  --muted-foreground: #95a3c9;
-  --accent: #ebefff;
-  --accent-foreground: #0b1222;
-  --destructive: #ff738f;
-  --destructive-foreground: #0b1222;
-  --border: #24304a;
-  --input: #151d30;
-  --ring: #6b9dff;
-  --chart-1: #7f8dff;
-  --chart-2: #6cd9ff;
-  --chart-3: #b08fff;
-  --chart-4: #71bea7;
-  --chart-5: #f0b775;
-  --radius: 0.85rem;
-  --sidebar: #0d1424;
-  --sidebar-foreground: #ebefff;
-  --sidebar-primary: #ebefff;
-  --sidebar-primary-foreground: #0b1222;
-  --sidebar-accent: #1a253d;
-  --sidebar-accent-foreground: #ebefff;
-  --sidebar-border: #24304a;
-  --sidebar-ring: #6b9dff;
-  --brand: #8d9eff;
-  --brand-soft: #5163a2;
-  --brand-contrast: #f8fbff;
+  /* Dark — soil after dusk */
+  --background: #0b0608;
+  --foreground: #f2e9e4;
+  --card: #150c10;
+  --card-foreground: #f2e9e4;
+  --popover: #150c10;
+  --popover-foreground: #f2e9e4;
+  --primary: #e4304a;
+  --primary-foreground: #ffffff;
+  --secondary: #22131a;
+  --secondary-foreground: #f2e9e4;
+  --muted: #2c1a21;
+  --muted-foreground: #a68f92;
+  --accent: #e4304a;
+  --accent-foreground: #ffffff;
+  --destructive: #ff6b5b;
+  --destructive-foreground: #0b0608;
+  --border: #2c1a21;
+  --input: #150c10;
+  --ring: #e4304a;
+  --chart-1: #e4304a;
+  --chart-2: #7a0f22;
+  --chart-3: #ff6b5b;
+  --chart-4: #7c8a6b;
+  --chart-5: #d9a06b;
+  --radius: 0.25rem;
+  --sidebar: #150c10;
+  --sidebar-foreground: #f2e9e4;
+  --sidebar-primary: #e4304a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #22131a;
+  --sidebar-accent-foreground: #f2e9e4;
+  --sidebar-border: #2c1a21;
+  --sidebar-ring: #e4304a;
+
+  /* Higanbana palette */
+  --lily: #e4304a;
+  --wine: #7a0f22;
+  --ember: #ff6b5b;
+  --stem: #7c8a6b;
+  --ash: #a68f92;
 }
 
 @theme inline {
-  --font-sans: var(--font-body), 'Segoe UI', system-ui, sans-serif;
-  --font-mono: 'Geist Mono', 'Courier New', monospace;
+  --font-sans: var(--font-body), 'Hiragino Kaku Gothic ProN', 'Yu Gothic', system-ui, sans-serif;
+  --font-display: var(--font-mincho), 'Hiragino Mincho ProN', 'Yu Mincho', Georgia, serif;
+  --font-mono: var(--font-data), ui-monospace, 'Courier New', monospace;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -108,10 +127,6 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -120,15 +135,27 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-lily: var(--lily);
+  --color-wine: var(--wine);
+  --color-ember: var(--ember);
+  --color-stem: var(--stem);
+  --color-ash: var(--ash);
+
+  --radius-sm: calc(var(--radius) - 1px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
 }
 
+/* ── Theme crossfade: the Bad Apple mask, kept ── */
 ::view-transition-group(root) {
   z-index: 100;
 }
 
 ::view-transition-new(root),
 ::view-transition-old(root) {
-  animation: scale 2.40s both;
+  animation: scale 2.4s both;
 }
 
 ::view-transition-new(root) {
@@ -141,17 +168,14 @@
     mask-size: 0;
     -webkit-mask-size: 0;
   }
-
   10% {
     mask-size: 100vmax 70vmax;
     -webkit-mask-size: 100vmax 70vmax;
   }
-
   90% {
     mask-size: 100vmax 70vmax;
     -webkit-mask-size: 100vmax 70vmax;
   }
-
   100% {
     mask-size: 750vmax;
     -webkit-mask-size: 750vmax;
@@ -160,33 +184,41 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/60;
   }
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 7rem;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
     min-height: 100vh;
     text-wrap: pretty;
+    /* Wine pooling low like soil, ember bleeding in from the upper right */
     background-image:
       radial-gradient(
-        circle at 15% -15%,
-        color-mix(in srgb, var(--brand) 16%, transparent) 0%,
-        transparent 48%
+        120% 80% at 8% 108%,
+        color-mix(in srgb, var(--wine) 40%, transparent) 0%,
+        transparent 60%
       ),
       radial-gradient(
-        circle at 85% 10%,
-        color-mix(in srgb, var(--foreground) 10%, transparent) 0%,
-        transparent 36%
+        70% 50% at 96% -8%,
+        color-mix(in srgb, var(--lily) 13%, transparent) 0%,
+        transparent 62%
+      ),
+      radial-gradient(
+        90% 60% at 50% 45%,
+        color-mix(in srgb, var(--stem) 6%, transparent) 0%,
+        transparent 70%
       ),
       linear-gradient(var(--background), var(--background));
+    background-attachment: fixed;
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--brand) 38%, transparent);
+    background: color-mix(in srgb, var(--lily) 42%, transparent);
     color: var(--foreground);
   }
 
@@ -194,66 +226,255 @@
   h2,
   h3,
   h4 {
-    font-family: var(--font-display), var(--font-sans);
+    font-family: var(--font-display);
+    /* Mincho ships at 400 only; a synthesised bold smears its hairlines. */
+    font-weight: 400;
+  }
+
+  h1,
+  h2 {
+    letter-spacing: -0.015em;
   }
 }
 
 @layer components {
   .section-shell {
-    @apply relative py-20 sm:py-28;
+    @apply relative py-24 sm:py-32;
   }
 
   .section-inner {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-10;
   }
 
-  .section-label {
-    @apply inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground backdrop-blur;
+  /* ══ THE SPINE ══════════════════════════════════════════════
+     The page is built on a stalk, not a centred column. One
+     hairline runs the whole document; every section is a node on
+     it and its content hangs to the right. The asymmetry is the
+     point — a higanbana is a bloom on a bare vertical stem, so
+     the layout is too.
+     ═══════════════════════════════════════════════════════════ */
+  .spine {
+    @apply relative grid;
+    grid-template-columns: 1.75rem 1fr;
+  }
+
+  @media (min-width: 640px) {
+    .spine {
+      grid-template-columns: 3.25rem 1fr;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .spine {
+      grid-template-columns: 5rem 1fr;
+    }
+  }
+
+  .spine-rail {
+    @apply relative;
+  }
+
+  /* The segment overshoots its section's padding at both ends so
+     neighbouring segments meet and read as one continuous stem. */
+  .spine-rail::before {
+    content: '';
+    @apply absolute left-0 w-px;
+    top: -6rem;
+    bottom: -6rem;
+    background: var(--border);
+    transition: background 0.7s ease;
+  }
+
+  @media (min-width: 640px) {
+    .spine-rail::before {
+      top: -8rem;
+      bottom: -8rem;
+    }
+  }
+
+  /* The stalk starts at the first node and ends at the last. */
+  .spine-rail[data-cap='start']::before {
+    top: 1.15rem;
+  }
+
+  .spine-rail[data-cap='end']::before {
+    bottom: 45%;
+  }
+
+  /* The section you're reading is the one in flower. */
+  .spine-rail[data-active='true']::before {
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--lily) 12%, transparent),
+      color-mix(in srgb, var(--lily) 60%, transparent) 22%,
+      color-mix(in srgb, var(--lily) 60%, transparent) 78%,
+      color-mix(in srgb, var(--lily) 12%, transparent)
+    );
+  }
+
+  /* ── Node: the kanji marker sitting on the stem ── */
+  .spine-node {
+    @apply absolute left-0 flex h-7 w-7 -translate-x-1/2 items-center justify-center text-base leading-none transition-colors duration-500;
+    top: 0;
+    font-family: var(--font-display);
+    color: var(--ash);
+    border: 1px solid var(--border);
+    background: var(--background);
+  }
+
+  .spine-rail[data-active='true'] .spine-node {
+    color: var(--lily);
+    border-color: color-mix(in srgb, var(--lily) 55%, transparent);
+    background: color-mix(in srgb, var(--lily) 10%, transparent);
+  }
+
+  /* ── Eyebrow: latin label; its glyph lives on the stem ── */
+  .eyebrow {
+    @apply flex items-center gap-3 text-[11px] font-medium uppercase;
+    letter-spacing: 0.34em;
+    color: var(--ash);
+    font-family: var(--font-mono);
+  }
+
+  .eyebrow-kanji {
+    @apply inline-flex h-7 w-7 shrink-0 items-center justify-center text-base leading-none;
+    font-family: var(--font-display);
+    letter-spacing: 0;
+    color: var(--lily);
+    border: 1px solid color-mix(in srgb, var(--lily) 34%, transparent);
+    background: color-mix(in srgb, var(--lily) 8%, transparent);
   }
 
   .section-title {
-    @apply mt-5 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl;
+    @apply mt-6 max-w-3xl text-[2.6rem] leading-[1.06] tracking-tight text-foreground sm:text-6xl;
+    font-family: var(--font-display);
+    font-weight: 400;
   }
 
   .section-copy {
-    @apply mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg;
+    @apply mt-5 max-w-2xl text-base leading-[1.85] sm:text-[1.0625rem];
+    color: var(--muted-foreground);
   }
 
+  /* ── Surfaces: squared, hairline, lit from below ── */
   .surface-card {
-    @apply rounded-3xl border border-border/80 bg-card/90;
-    box-shadow: 0 10px 35px -20px rgba(16, 24, 40, 0.4);
+    @apply relative border bg-card/70 backdrop-blur-sm;
+    border-color: color-mix(in srgb, var(--border) 90%, transparent);
+    border-radius: var(--radius);
+    box-shadow: 0 18px 50px -34px color-mix(in srgb, var(--wine) 85%, transparent);
   }
 
   .glass-card {
-    @apply rounded-3xl border border-border/60 bg-card/60 backdrop-blur-xl;
+    @apply relative border bg-card/45 backdrop-blur-xl;
+    border-color: color-mix(in srgb, var(--border) 75%, transparent);
+    border-radius: var(--radius);
   }
 
+  /* A card whose top edge lights up as a filament.
+     Repeats .surface-card's declarations rather than @apply-ing it —
+     Tailwind v4 can't apply a custom class defined in the same layer. */
+  .bloom-card {
+    @apply relative overflow-hidden border bg-card/70 backdrop-blur-sm transition-colors duration-300;
+    border-color: color-mix(in srgb, var(--border) 90%, transparent);
+    border-radius: var(--radius);
+    box-shadow: 0 18px 50px -34px color-mix(in srgb, var(--wine) 85%, transparent);
+  }
+
+  .bloom-card::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 z-10 h-px;
+    background: linear-gradient(90deg, transparent, var(--lily), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .bloom-card:hover::before,
+  .bloom-card:focus-visible::before,
+  .bloom-card:focus-within::before {
+    opacity: 1;
+  }
+
+  .bloom-card:hover {
+    border-color: color-mix(in srgb, var(--lily) 45%, transparent);
+  }
+
+  /* ── Tags: mono, squared, no pill ── */
   .pill-chip {
-    @apply inline-flex items-center rounded-full border border-border/80 bg-background/75 px-3 py-1 text-xs font-medium text-foreground;
+    @apply inline-flex items-center border px-2 py-1 text-[10px] font-medium uppercase;
+    letter-spacing: 0.12em;
+    font-family: var(--font-mono);
+    border-radius: 2px;
+    border-color: var(--border);
+    background: color-mix(in srgb, var(--card) 60%, transparent);
+    color: var(--ash);
   }
 
+  .pill-chip-lily {
+    border-color: color-mix(in srgb, var(--lily) 40%, transparent);
+    background: color-mix(in srgb, var(--lily) 10%, transparent);
+    color: var(--lily);
+  }
+
+  /* ── Buttons ── */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-semibold text-background transition-transform duration-200 hover:-translate-y-0.5;
+    @apply relative inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[13px] font-semibold uppercase text-white transition-all duration-300;
+    letter-spacing: 0.16em;
+    font-family: var(--font-mono);
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--wine) 0%, var(--lily) 100%);
+    box-shadow: 0 12px 34px -18px color-mix(in srgb, var(--lily) 90%, transparent);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 16px 40px -14px color-mix(in srgb, var(--lily) 95%, transparent);
+    transform: translateY(-2px);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card/70 px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary/80;
+    @apply inline-flex items-center justify-center gap-2 border px-7 py-3.5 text-[13px] font-semibold uppercase transition-all duration-300;
+    letter-spacing: 0.16em;
+    font-family: var(--font-mono);
+    border-radius: var(--radius);
+    border-color: color-mix(in srgb, var(--lily) 34%, transparent);
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--lily) 5%, transparent);
   }
 
-  .grid-overlay {
-    background-image:
-      linear-gradient(
-        to right,
-        color-mix(in srgb, var(--border) 45%, transparent) 1px,
-        transparent 1px
-      ),
-      linear-gradient(
-        to bottom,
-        color-mix(in srgb, var(--border) 45%, transparent) 1px,
-        transparent 1px
-      );
-    background-size: 44px 44px;
-    mask-image: radial-gradient(circle at center, black 30%, transparent 90%);
+  .btn-secondary:hover {
+    border-color: var(--lily);
+    background: color-mix(in srgb, var(--lily) 12%, transparent);
+    transform: translateY(-2px);
+  }
+
+  /* ── Paddy field: higanbana grows on flooded terrace borders,
+        so the ambient pattern bands horizontally, never a grid ── */
+  .paddy-field {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--lily) 13%, transparent) 0px,
+      color-mix(in srgb, var(--lily) 13%, transparent) 1px,
+      transparent 1px,
+      transparent 88px
+    );
+    mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+  }
+
+  /* ── A link whose filament grows on hover ── */
+  .filament-link {
+    @apply relative inline-flex items-center gap-2 transition-colors duration-300;
+  }
+
+  .filament-link::after {
+    content: '';
+    @apply absolute -bottom-0.5 left-0 h-px w-0;
+    background: linear-gradient(90deg, var(--lily), transparent);
+    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .filament-link:hover::after,
+  .filament-link:focus-visible::after {
+    @apply w-full;
   }
 }
 
@@ -263,5 +484,41 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /* Japanese set top-to-bottom, the way a hanging scroll is inscribed */
+  .writing-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  ::view-transition-new(root),
+  ::view-transition-old(root) {
+    animation: none !important;
   }
 }

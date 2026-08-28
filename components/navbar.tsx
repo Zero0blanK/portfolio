@@ -6,130 +6,73 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import { Lily } from '@/components/lily';
+import { SECTIONS, SECTION_IDS } from '@/lib/sections';
+import { useActiveSection } from '@/hooks/use-active-section';
+
+/** Plain-English nav labels; the kanji comes from the section table. */
+const NAV = [
+  { id: 'about', label: 'About' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'work', label: 'Work' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const kanjiFor = (id: string) => SECTIONS.find((s) => s.id === id)?.kanji ?? '';
 
 export function Navbar() {
   const { theme, toggleTheme, isAnimating } = useTheme();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
-  // Avoid hydration mismatch by rendering nothing until after mount
+  const isHome = pathname === '/';
+  const activeSection = useActiveSection(SECTION_IDS, isHome);
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Track scroll state for navbar blur/shadow
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 18);
-
-      if (window.scrollY < 280) {
-        setActiveSection(null);
-      }
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 18);
     handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
+  // Lock body scroll while the mobile overlay is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
   }, [menuOpen]);
 
-  // Track active section via IntersectionObserver (works for both scroll directions)
-  useEffect(() => {
-    const sectionIds = ['home', 'about', 'work', 'contact'];
-    const observers: IntersectionObserver[] = [];
+  const hrefFor = (id: string) => (isHome ? `#${id}` : `/#${id}`);
+  const isActive = (id: string) => isHome && activeSection === id;
 
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setActiveSection(`#${id}`);
-          }
-        },
-        {
-          rootMargin: '-55% 0px -45% 0px',
-          threshold: 0,
-        }
-      );
-
-      observer.observe(el);
-      observers.push(observer);
-    });
-
-    return () => observers.forEach((obs) => obs.disconnect());
-  }, []);
-
-  const navLinks = [
-    { label: 'About', href: '#about' },
-    { label: 'Projects', href: '#work' },
-    // { label: 'Skills', href: '#skills' },
-    // { label: 'Experience', href: '#experience' },
-    // { label: 'Projects', href: '/projects' },
-    { label: 'Contact', href: '#contact' },
-  ];
-
-  const isHome = pathname === '/';
-  const getLinkHref = (href: string) => (href.startsWith('#') && !isHome ? `/${href}` : href);
-
-  const handleNavClick = (href: string) => {
-    setActiveSection(href.startsWith('/') ? href.slice(1) : href);
-    setMenuOpen(false);
-  };
-
-  const isActive = (href: string) => activeSection === href;
-
-  // Stagger animation variants for the overlay menu
   const overlayVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
-    },
-    exit: {
-      opacity: 0,
-      transition: { duration: 0.25, ease: [0.42, 0, 1, 1], delay: 0.1 },
-    },
+    visible: { opacity: 1, transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] as const } },
+    exit: { opacity: 0, transition: { duration: 0.25, delay: 0.08 } },
   };
 
   const linkContainerVariants = {
     hidden: {},
-    visible: {
-      transition: { staggerChildren: 0.08, delayChildren: 0.15 },
-    },
-    exit: {
-      transition: { staggerChildren: 0.04, staggerDirection: -1 },
-    },
+    visible: { transition: { staggerChildren: 0.07, delayChildren: 0.12 } },
+    exit: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
   };
 
   const linkItemVariants = {
-    hidden: { opacity: 0, x: -30, filter: 'blur(8px)' },
+    hidden: { opacity: 0, x: -24, filter: 'blur(8px)' },
     visible: {
       opacity: 1,
       x: 0,
       filter: 'blur(0px)',
-      transition: { duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] },
+      transition: { duration: 0.45, ease: [0.25, 0.46, 0.45, 0.94] as const },
     },
-    exit: {
-      opacity: 0,
-      x: 20,
-      filter: 'blur(4px)',
-      transition: { duration: 0.2 },
-    },
+    exit: { opacity: 0, x: 16, filter: 'blur(4px)', transition: { duration: 0.2 } },
   };
 
   if (!mounted) return null;
@@ -137,120 +80,124 @@ export function Navbar() {
   return (
     <>
       <motion.nav
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45 }}
-        className="fixed inset-x-0 top-4 z-50 px-4 sm:px-6"
+        transition={{ duration: 0.5 }}
+        className="fixed inset-x-0 top-0 z-50"
       >
-        <div className="mx-auto w-full max-w-4xl">
-          <div
-            className={`flex relative rounded-2xl border px-3 py-2 transition-all duration-300 sm:px-4 ${scrolled
-              ? 'border-border/90 bg-background/78 shadow-[0_14px_45px_-25px_rgba(16,23,43,0.7)] backdrop-blur-xl'
-              : 'border-border/70 bg-background/62 backdrop-blur-lg'
-              }`}
-          >
-            <div className='w-full flex justify-between'>
-              <Link
-                href="/"
-                className="inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-foreground/95"
-              >
-                <span className="h-2 w-2 rounded-full bg-(--brand)" />
+        <div
+          className={`border-b transition-all duration-500 ${
+            scrolled
+              ? 'border-border/80 bg-background/80 backdrop-blur-xl'
+              : 'border-transparent bg-transparent'
+          }`}
+        >
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-4 sm:px-8 lg:px-10">
+            <Link href="/" className="group inline-flex items-center gap-2.5">
+              <span className="text-lily transition-transform duration-500 group-hover:rotate-[18deg]">
+                <Lily className="h-6 w-6" weight={7} stem={false} />
+              </span>
+              <span className="font-display text-[15px] tracking-wide text-foreground">
                 Mystyvyy
-              </Link>
-              <div className="flex items-center gap-4">
-                {/* Desktop nav links */}
-                <div className="hidden items-center gap-1 md:flex">
-                  {navLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={getLinkHref(link.href)}
-                      onClick={() => handleNavClick(link.href)}
-                      className={`relative rounded-full px-3 py-2 text-sm font-medium transition-colors ${isActive(link.href)
-                        ? 'bg-secondary text-foreground'
-                        : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
-                        }`}
-                    >
-                      {link.label}
-                      {isActive(link.href) && (
-                        <motion.span
-                          layoutId="nav-active-pill"
-                          className="absolute inset-0 -z-10 rounded-full bg-(--brand)/12"
-                          transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-                        />
-                      )}
-                    </a>
-                  ))}
-                </div>
+              </span>
+            </Link>
 
-                <div className="flex items-center gap-2">
-                  <motion.button
-                    whileHover={isAnimating ? {} : { scale: 1.04 }}
-                    whileTap={isAnimating ? {} : { scale: 0.96 }}
-                    onClick={toggleTheme}
-                    disabled={isAnimating}
-                    className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70 transition-colors hover:bg-secondary disabled:pointer-events-none disabled:opacity-50"
-                    aria-label="Toggle theme"
+            <div className="flex items-center gap-1 sm:gap-3">
+              <div className="hidden items-center md:flex">
+                {NAV.map((link) => (
+                  <a
+                    key={link.id}
+                    href={hrefFor(link.id)}
+                    onClick={() => setMenuOpen(false)}
+                    className={`font-mono relative px-4 py-2 text-[11px] uppercase tracking-[0.22em] transition-colors duration-300 ${
+                      isActive(link.id)
+                        ? 'text-lily'
+                        : 'text-ash hover:text-foreground'
+                    }`}
                   >
-                    {theme === 'dark' ? (
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 3v1m0 16v1m9-9h-1m-16 0H1m15.364 1.636l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                        />
-                      </svg>
-                    ) : (
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                        />
-                      </svg>
+                    {link.label}
+                    {isActive(link.id) && (
+                      <motion.span
+                        layoutId="nav-filament"
+                        className="absolute inset-x-3 -bottom-px h-px"
+                        style={{
+                          background:
+                            'linear-gradient(90deg, transparent, var(--lily), transparent)',
+                        }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                      />
                     )}
-                  </motion.button>
-
-                  {/* Burger / close button with Lucide icons */}
-                  <motion.button
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => setMenuOpen((open) => !open)}
-                    className="relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/70 md:hidden"
-                    aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-                  >
-                    <AnimatePresence mode="wait" initial={false}>
-                      {menuOpen ? (
-                        <motion.span
-                          key="close"
-                          initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-                          animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                          exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
-                          transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
-                        >
-                          <X className="h-4.5 w-4.5" strokeWidth={2} />
-                        </motion.span>
-                      ) : (
-                        <motion.span
-                          key="menu"
-                          initial={{ opacity: 0, rotate: 90, scale: 0.5 }}
-                          animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                          exit={{ opacity: 0, rotate: -90, scale: 0.5 }}
-                          transition={{ duration: 0.2, ease: [0.34, 1.56, 0.64, 1] }}
-                        >
-                          <Menu className="h-4.5 w-4.5" strokeWidth={2} />
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                  </motion.button>
-                </div>
+                  </a>
+                ))}
               </div>
+
+              <button
+                type="button"
+                onClick={toggleTheme}
+                disabled={isAnimating}
+                className="inline-flex h-9 w-9 items-center justify-center border border-border/80 text-ash transition-colors hover:border-lily/50 hover:text-lily disabled:pointer-events-none disabled:opacity-40"
+                style={{ borderRadius: 'var(--radius)' }}
+                aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              >
+                {theme === 'dark' ? (
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.6}
+                      d="M12 3v1m0 16v1m9-9h-1m-16 0H1m15.364 1.636l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    />
+                  </svg>
+                ) : (
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.6}
+                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                    />
+                  </svg>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMenuOpen((open) => !open)}
+                className="inline-flex h-9 w-9 items-center justify-center border border-border/80 text-ash transition-colors hover:border-lily/50 hover:text-lily md:hidden"
+                style={{ borderRadius: 'var(--radius)' }}
+                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={menuOpen}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {menuOpen ? (
+                    <motion.span
+                      key="close"
+                      initial={{ opacity: 0, rotate: -90 }}
+                      animate={{ opacity: 1, rotate: 0 }}
+                      exit={{ opacity: 0, rotate: 90 }}
+                      transition={{ duration: 0.18 }}
+                    >
+                      <X className="h-4 w-4" strokeWidth={1.8} />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="menu"
+                      initial={{ opacity: 0, rotate: 90 }}
+                      animate={{ opacity: 1, rotate: 0 }}
+                      exit={{ opacity: 0, rotate: -90 }}
+                      transition={{ duration: 0.18 }}
+                    >
+                      <Menu className="h-4 w-4" strokeWidth={1.8} />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
             </div>
           </div>
         </div>
       </motion.nav>
 
-      {/* Full-screen mobile overlay menu */}
+      {/* Mobile overlay */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -261,97 +208,80 @@ export function Navbar() {
             exit="exit"
             className="fixed inset-0 z-40 md:hidden"
           >
-            {/* Frosted glass backdrop */}
-            <div className="absolute inset-0 bg-background/85 backdrop-blur-2xl" />
+            <div className="absolute inset-0 bg-background/94 backdrop-blur-2xl" />
 
-            {/* Decorative brand glow orb */}
             <div
-              className="pointer-events-none absolute -right-20 top-1/4 h-72 w-72 rounded-full opacity-20"
+              aria-hidden
+              className="pointer-events-none absolute -right-24 top-1/4 h-80 w-80 rounded-full opacity-25"
               style={{
-                background: 'radial-gradient(circle, var(--brand) 0%, transparent 70%)',
-                filter: 'blur(60px)',
+                background: 'radial-gradient(circle, var(--lily) 0%, transparent 70%)',
+                filter: 'blur(70px)',
               }}
             />
             <div
-              className="pointer-events-none absolute -left-16 bottom-1/3 h-56 w-56 rounded-full opacity-10"
-              style={{
-                background: 'radial-gradient(circle, var(--brand) 0%, transparent 70%)',
-                filter: 'blur(50px)',
-              }}
-            />
+              aria-hidden
+              className="pointer-events-none absolute -left-20 bottom-10 w-80 text-lily/10"
+            >
+              <Lily className="h-auto w-full" weight={1.6} />
+            </div>
 
-            {/* Menu content */}
-            <div className="relative flex h-full flex-col justify-center px-8 sm:px-12">
+            <div className="relative flex h-full flex-col justify-center px-8">
               <motion.nav
                 variants={linkContainerVariants}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                className="flex flex-col gap-2"
+                className="flex flex-col"
               >
-                {navLinks.map((link, i) => (
-                  <motion.div key={link.label} variants={linkItemVariants}>
-                    <a
-                      href={getLinkHref(link.href)}
-                      onClick={() => handleNavClick(link.href)}
-                      className="group flex items-center gap-4 rounded-2xl px-4 py-4 transition-colors duration-200 hover:bg-secondary/50"
+                {NAV.map((link) => (
+                  <motion.a
+                    key={link.id}
+                    variants={linkItemVariants}
+                    href={hrefFor(link.id)}
+                    onClick={() => setMenuOpen(false)}
+                    className="group flex items-center gap-5 border-b border-border/60 py-6"
+                  >
+                    <span
+                      aria-hidden
+                      className={`font-display text-2xl leading-none transition-colors duration-300 ${
+                        isActive(link.id) ? 'text-lily' : 'text-ash/60 group-hover:text-lily'
+                      }`}
                     >
-                      {/* Number indicator */}
-                      <span className="text-xs font-medium tabular-nums text-muted-foreground/50 font-mono">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-
-                      {/* Accent dot for active */}
-                      <span
-                        className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${isActive(link.href)
-                          ? 'bg-(--brand) shadow-[0_0_8px_var(--brand)]'
-                          : 'bg-border group-hover:bg-muted-foreground'
-                          }`}
+                      {kanjiFor(link.id)}
+                    </span>
+                    <span
+                      className={`font-display text-4xl transition-colors duration-300 ${
+                        isActive(link.id) ? 'text-lily' : 'text-foreground'
+                      }`}
+                    >
+                      {link.label}
+                    </span>
+                    <svg
+                      className="ml-auto h-5 w-5 text-ash/40 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-lily"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={1.4}
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
                       />
-
-                      {/* Label */}
-                      <span
-                        className={`text-3xl font-semibold tracking-tight transition-colors duration-200 ${isActive(link.href)
-                          ? 'text-foreground'
-                          : 'text-foreground/70 group-hover:text-foreground'
-                          }`}
-                      >
-                        {link.label}
-                      </span>
-
-                      {/* Hover arrow */}
-                      <motion.span
-                        className="ml-auto text-muted-foreground/0 group-hover:text-muted-foreground transition-colors duration-200"
-                        initial={false}
-                      >
-                        <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
-                        </svg>
-                      </motion.span>
-                    </a>
-
-                    {/* Subtle divider between links */}
-                    {i < navLinks.length - 1 && (
-                      <div className="mx-4 mt-1 h-px bg-border/40" />
-                    )}
-                  </motion.div>
+                    </svg>
+                  </motion.a>
                 ))}
               </motion.nav>
 
-              {/* Bottom accent strip */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ delay: 0.4, duration: 0.4 }}
-                className="mt-12 flex items-center gap-3 px-4"
+                exit={{ opacity: 0 }}
+                transition={{ delay: 0.35, duration: 0.4 }}
+                className="font-mono mt-12 text-[10px] uppercase tracking-[0.3em] text-ash"
               >
-                <span className="h-px flex-1 bg-linear-to-r from-transparent via-border to-transparent" />
-                <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground/50">
-                  Let&apos;s connect
-                </span>
-                <span className="h-px flex-1 bg-linear-to-r from-transparent via-border to-transparent" />
-              </motion.div>
+                <span className="font-display">彼岸花</span> — Davao, Philippines
+              </motion.p>
             </div>
           </motion.div>
         )}

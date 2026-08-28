@@ -1,3 +1,5 @@
+import type { MiniProjectData } from './project-mini-data';
+
 export type ProjectData = {
   id: string;
   title: string;
@@ -153,3 +155,15 @@ export const projectCatalog: ProjectData[] = [
     demoUrl: '',
   },
 ];
+
+/** Either kind of project, as the cards and the dialog receive them. */
+export type AnyProject = ProjectData | MiniProjectData;
+
+/**
+ * Narrows to a full case study. `'impact' in project` looks like it would do
+ * this, but TypeScript widens the missing property to `unknown` rather than
+ * discarding the mini variant, so the guard has to be explicit.
+ */
+export function isFullProject(project: AnyProject): project is ProjectData {
+  return 'impact' in project;
+}

@@ -3,17 +3,24 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, ExternalLink, Github, Maximize2 } from 'lucide-react';
-import type { ProjectData } from '@/lib/project-data';
-import type { MiniProjectData } from '@/lib/project-mini-data';
+import { isFullProject, type AnyProject } from '@/lib/project-data';
 
 type ProjectCardProps = {
-  project: ProjectData | MiniProjectData;
+  project: AnyProject;
   onViewDetails: (projectId: string) => void;
   onExpandImage?: (projectId: string, imageIndex: number) => void;
   variant?: 'default' | 'compact';
 };
 
-export function ProjectCard({ project, onViewDetails, onExpandImage, variant = 'default' }: ProjectCardProps) {
+const overlayButton =
+  'flex h-7 w-7 items-center justify-center border border-white/25 bg-black/55 text-white opacity-0 backdrop-blur-sm transition-all duration-200 hover:border-white/60 hover:bg-black/80 group-hover:opacity-100 focus-visible:opacity-100';
+
+export function ProjectCard({
+  project,
+  onViewDetails,
+  onExpandImage,
+  variant = 'default',
+}: ProjectCardProps) {
   const images = project.images;
   const [imageIndex, setImageIndex] = useState(0);
   const hasMultiple = images.length > 1;
@@ -45,36 +52,42 @@ export function ProjectCard({ project, onViewDetails, onExpandImage, variant = '
           onViewDetails(project.id);
         }
       }}
-      className={`surface-card h-full flex cursor-pointer flex-col overflow-hidden transition-colors hover:bg-card`}
+      className="bloom-card flex h-full cursor-pointer flex-col"
     >
-      {/* ── Image area ── */}
-      <div className={`group relative ${!isCompact ? 'h-48' : 'h-60'} border-b border-border/70`}>
+      {/* ── Image ── */}
+      <div className={`group relative ${isCompact ? 'h-52' : 'h-56'} border-b border-border/70`}>
         <Image
           src={images[imageIndex]}
           alt={`${project.title} screenshot ${imageIndex + 1}`}
           fill
-          className="object-cover transition-opacity duration-300"
+          sizes="(min-width: 1280px) 24rem, (min-width: 640px) 45vw, 100vw"
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-black/20" />
+        {/* Wine wash keeps every screenshot inside the palette */}
+        <div
+          aria-hidden
+          className="absolute inset-0 transition-opacity duration-500 group-hover:opacity-60"
+          style={{
+            background:
+              'linear-gradient(180deg, color-mix(in srgb, var(--wine) 22%, transparent) 0%, transparent 45%, color-mix(in srgb, var(--wine) 62%, transparent) 100%)',
+          }}
+        />
 
-        {/* Role badge */}
         {'role' in project && (
-          <div className="absolute left-3 top-3 inline-flex items-center rounded-md border border-white/35 bg-black/40 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
+          <span className="pill-chip absolute left-3 top-3 border-white/25 bg-black/50 text-white backdrop-blur-sm">
             {project.role}
-          </div>
+          </span>
         )}
 
-        {/* Year badge */}
-        <div className="absolute right-3 top-3 pill-chip border-white/35 bg-black/45 text-white">
+        <span className="pill-chip absolute right-3 top-3 border-white/25 bg-black/50 text-white backdrop-blur-sm">
           {project.year}
-        </div>
+        </span>
 
-        {/* Expand button */}
         <button
           type="button"
           aria-label="Expand image"
           onClick={handleExpand}
-          className="absolute bottom-3 right-3 flex h-7 w-7 items-center justify-center rounded-md border border-white/30 bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 group-hover:opacity-100"
+          className={`${overlayButton} absolute bottom-3 right-3`}
         >
           <Maximize2 className="h-3.5 w-3.5" />
         </button>
@@ -85,7 +98,7 @@ export function ProjectCard({ project, onViewDetails, onExpandImage, variant = '
               type="button"
               aria-label="Previous image"
               onClick={prev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full border border-white/30 bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 group-hover:opacity-100"
+              className={`${overlayButton} absolute left-2 top-1/2 -translate-y-1/2`}
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
@@ -93,13 +106,12 @@ export function ProjectCard({ project, onViewDetails, onExpandImage, variant = '
               type="button"
               aria-label="Next image"
               onClick={next}
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex h-7 w-7 items-center justify-center rounded-full border border-white/30 bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 group-hover:opacity-100"
+              className={`${overlayButton} absolute right-2 top-1/2 -translate-y-1/2`}
             >
               <ChevronRight className="h-4 w-4" />
             </button>
 
-            {/* Dot indicators */}
-            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1">
+            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
               {images.map((_, i) => (
                 <button
                   key={i}
@@ -109,9 +121,10 @@ export function ProjectCard({ project, onViewDetails, onExpandImage, variant = '
                     e.stopPropagation();
                     setImageIndex(i);
                   }}
-                  className={`h-1.5 rounded-full transition-all duration-200 ${
-                    i === imageIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
+                  className={`transition-all duration-300 ${
+                    i === imageIndex ? 'w-6 bg-lily' : 'w-3 bg-white/45 hover:bg-white/80'
                   }`}
+                  style={{ height: 2 }}
                 />
               ))}
             </div>
@@ -119,38 +132,50 @@ export function ProjectCard({ project, onViewDetails, onExpandImage, variant = '
         )}
       </div>
 
-      {/* ── Card body ── */}
-      <div className="flex flex-1 flex-col p-4">
-        <h3 className={`${!isCompact ? 'text-lg' : 'text-base'} font-semibold text-foreground`}>{project.title}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{project.subtitle}</p>
-
-        <p className={`${!isCompact ? 'mt-3' : 'mt-1'} line-clamp-2 text-sm leading-relaxed text-foreground/90`}>
-          {project.description}
-        </p>
-        {!isCompact && 'impact' in project && (
-          <p className="mt-3 text-sm font-medium text-muted-foreground">
-            Impact: <span className="text-foreground">{project.impact}</span>
+      {/* ── Body ── */}
+      <div className="flex flex-1 flex-col p-5">
+        <h3
+          className={`font-display ${isCompact ? 'text-lg' : 'text-xl'} leading-snug text-foreground`}
+        >
+          {project.title}
+        </h3>
+        {project.subtitle && (
+          <p className="font-mono mt-1.5 text-[10px] uppercase tracking-[0.16em] text-ash">
+            {project.subtitle}
           </p>
         )}
 
-        <div className="mt-3 flex flex-wrap gap-2">
-          {project.tags.slice(0, 5).map((tag) => (
+        <p
+          className={`${isCompact ? 'mt-2 line-clamp-2' : 'mt-3 line-clamp-3'} text-sm leading-[1.75] text-muted-foreground`}
+        >
+          {project.description}
+        </p>
+
+        {!isCompact && isFullProject(project) && (
+          <p className="mt-4 border-l-2 border-lily/50 pl-3 text-sm leading-relaxed text-foreground/90">
+            {project.impact}
+          </p>
+        )}
+
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {project.tags.slice(0, isCompact ? 3 : 5).map((tag) => (
             <span key={tag} className="pill-chip">
               {tag}
             </span>
           ))}
         </div>
 
-        <div className="mt-auto grid grid-cols-2 gap-2 pt-4">
+        <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
           <a
             href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(event) => event.stopPropagation()}
-            className="inline-flex items-center justify-center gap-1 rounded-lg border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-secondary"
+            className="font-mono inline-flex items-center justify-center gap-1.5 border border-border px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-foreground/90 transition-colors hover:border-lily/50 hover:text-lily"
+            style={{ borderRadius: 'var(--radius)' }}
           >
             <Github className="h-3.5 w-3.5" />
-            GitHub
+            Source
           </a>
           {project.demoUrl ? (
             <a
@@ -158,19 +183,19 @@ export function ProjectCard({ project, onViewDetails, onExpandImage, variant = '
               target="_blank"
               rel="noopener noreferrer"
               onClick={(event) => event.stopPropagation()}
-              className="inline-flex items-center justify-center gap-1 rounded-lg border border-border bg-card px-3 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-secondary"
+              className="font-mono inline-flex items-center justify-center gap-1.5 border border-lily/40 bg-lily/10 px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-lily transition-colors hover:border-lily hover:bg-lily/20"
+              style={{ borderRadius: 'var(--radius)' }}
             >
               <ExternalLink className="h-3.5 w-3.5" />
-              Live demo
+              Live
             </a>
           ) : (
-            <button
-              disabled
-              className="inline-flex cursor-not-allowed items-center justify-center gap-1 rounded-lg border border-border bg-card/50 px-3 py-2 text-xs font-semibold text-muted-foreground"
+            <span
+              className="font-mono inline-flex cursor-not-allowed items-center justify-center gap-1.5 border border-border/50 px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-ash/60"
+              style={{ borderRadius: 'var(--radius)' }}
             >
-              <ExternalLink className="h-3.5 w-3.5" />
-              Unavailable
-            </button>
+              Not deployed
+            </span>
           )}
         </div>
       </div>

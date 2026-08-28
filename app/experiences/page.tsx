@@ -1,61 +1,40 @@
 'use client';
 
-import { Navbar } from '@/components/navbar';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { Navbar } from '@/components/navbar';
+import { Lily } from '@/components/lily';
+import { RoleEntry, SeminarList, ServiceList } from '@/components/experience';
+import { roles } from '@/lib/experience-data';
 
-const allExperiences = [
-  {
-    id: 1,
-    title: '',
-    company: '',
-    period: '',
-    location: '',
-    description: '',
-    responsibilities: ['', '', '', ''],
-    technologies: [''],
-  },
-];
+const container = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.09 } },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 22 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as const } },
+};
 
 export default function ExperiencesPage() {
-  const container = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.08 },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.55 },
-    },
-  };
-
   return (
-    <main className="relative min-h-screen overflow-x-clip bg-background">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 grid-overlay opacity-35"
-      />
+    <main className="relative min-h-screen overflow-x-clip">
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 paddy-field" />
       <Navbar />
 
       <section className="section-shell pt-32">
-        <div className="section-inner max-w-5xl">
+        <div className="section-inner max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55 }}
-            className="flex flex-col"
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="font-mono filament-link text-[11px] uppercase tracking-[0.24em] text-ash hover:text-lily"
             >
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -65,106 +44,67 @@ export default function ExperiencesPage() {
               </svg>
               Back to home
             </Link>
-            <span className="section-label mt-6 w-fit">Career timeline</span>
-            <h1 className="section-title">Experience shaping products across disciplines.</h1>
-            <p className="section-copy">
-              Detailed context on roles, responsibilities, and technical scope across product
-              design, frontend, backend, and architecture work.
-            </p>
+
+            <div className="mt-9 flex items-start justify-between gap-8">
+              <div>
+                <div className="eyebrow">
+                  <span aria-hidden className="eyebrow-kanji">
+                    道
+                  </span>
+                  Path
+                </div>
+                <h1 className="section-title">Where I am on the way.</h1>
+                <p className="section-copy">
+                  One internship, three committee seats, the seminars in between, and a degree
+                  still in progress. The full record, with what each one actually asked of me.
+                </p>
+              </div>
+              <span aria-hidden className="hidden w-20 shrink-0 text-lily/15 lg:block">
+                <Lily className="h-auto w-full" weight={2.6} />
+              </span>
+            </div>
           </motion.div>
 
           <motion.div
             variants={container}
             initial="hidden"
             animate="visible"
-            className="relative mt-12"
+            className="mt-14 border-t border-border/70"
           >
-            <div className="absolute bottom-0 left-2 top-0 hidden w-px bg-border md:block" />
-
-            <div className="space-y-6">
-              {allExperiences.length === 1 ? (
-                <motion.div variants={item} className="surface-card p-8 text-center">
-                  <h3 className="text-2xl font-semibold text-foreground">
-                    My Development Journey
-                  </h3>
-
-                  <p className="mt-4 max-w-2xl mx-auto leading-relaxed text-muted-foreground">
-                    I'm a Computer Science student with a strong interest in full-stack development. I enjoy solving problems, learning new technologies, and building applications that are both practical and user-friendly. My academic and personal projects have helped me develop a solid foundation in modern web development.
-                  </p>
-
-                  <p className="mt-4 max-w-2xl mx-auto leading-relaxed text-muted-foreground">
-                    I'm actively seeking internship opportunities where I can contribute,
-                    collaborate with experienced engineers, and continue growing as a developer.
-                  </p>
-                </motion.div>
-              ) : (
-                allExperiences.map((exp) => (
-                  <motion.article key={exp.id} variants={item} className="relative md:pl-12">
-                    <span className="absolute left-0 top-8 hidden h-4 w-4 rounded-full border border-border bg-background md:block" />
-
-                    <div className="surface-card p-6 sm:p-7">
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                            {exp.company}
-                          </p>
-                          <h2 className="mt-2 text-2xl font-semibold text-foreground">
-                            {exp.title}
-                          </h2>
-                          <p className="mt-1 text-sm text-muted-foreground">{exp.location}</p>
-                        </div>
-                        <span className="pill-chip">{exp.period}</span>
-                      </div>
-
-                      <p className="mt-4 leading-relaxed text-muted-foreground">
-                        {exp.description}
-                      </p>
-
-                      <div className="mt-5">
-                        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                          Key responsibilities
-                        </p>
-                        <ul className="mt-3 grid gap-2">
-                          {exp.responsibilities.map((resp) => (
-                            <li
-                              key={resp}
-                              className="flex items-start gap-2 text-sm text-foreground/90"
-                            >
-                              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-(--brand)" />
-                              {resp}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="mt-5 flex flex-wrap gap-2">
-                        {exp.technologies.map((tech) => (
-                          <span key={tech} className="pill-chip">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.article>
-                ))
-              )}
-            </div>
+            {roles.map((role) => (
+              <motion.div key={role.id} variants={item}>
+                <RoleEntry role={role} />
+              </motion.div>
+            ))}
           </motion.div>
+
+          <div className="mt-16">
+            <ServiceList />
+          </div>
+
+          <div className="mt-16">
+            <SeminarList />
+          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55 }}
+            transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="mt-12"
+            className="surface-card mt-20 p-8 sm:p-12"
           >
-            <div className="glass-card p-6 text-center sm:p-8">
-              <p className="text-lg text-foreground">
-                Need a product-minded design + engineering partner?
-              </p>
-              <Link href="/#contact" className="btn-primary mt-4">
-                Start a conversation
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <h2 className="font-display text-3xl leading-tight text-foreground">
+              Looking for the next one.
+            </h2>
+            <p className="mt-5 max-w-2xl leading-[1.85] text-muted-foreground">
+              I&apos;m after a role where I can contribute to a real codebase and work alongside
+              engineers further along than me. The projects are the better evidence of what I can
+              do — start there.
+            </p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link href="/projects" className="btn-primary">
+                See what I&apos;ve built
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -172,6 +112,9 @@ export default function ExperiencesPage() {
                     d="M14 5l7 7m0 0l-7 7m7-7H3"
                   />
                 </svg>
+              </Link>
+              <Link href="/#contact" className="btn-secondary">
+                Get in touch
               </Link>
             </div>
           </motion.div>

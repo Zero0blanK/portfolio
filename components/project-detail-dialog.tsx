@@ -10,14 +10,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { ProjectData } from '@/lib/project-data';
-import type { MiniProjectData } from '@/lib/project-mini-data';
+import { isFullProject, type AnyProject } from '@/lib/project-data';
 
 type LightboxState = { images: string[]; index: number } | null;
 
 type ProjectDetailDialogProps = {
   projectId: string | null;
-  projects: (ProjectData | MiniProjectData)[];
+  projects: AnyProject[];
   onClose: () => void;
 };
 
@@ -32,6 +31,9 @@ type CarouselProps = {
   className?: string;
 };
 
+const overlayButton =
+  'flex h-8 w-8 items-center justify-center border border-white/25 bg-black/55 text-white opacity-0 backdrop-blur-sm transition-all duration-200 hover:border-white/60 hover:bg-black/80 group-hover:opacity-100 focus-visible:opacity-100';
+
 function ImageCarousel({
   images,
   index,
@@ -45,28 +47,25 @@ function ImageCarousel({
   const hasMultiple = images.length > 1;
 
   return (
-    <div
-      className={`group relative overflow-hidden rounded-xl border border-border/70 ${className}`}
-    >
+    <div className={`group relative overflow-hidden border border-border/70 ${className}`}>
       <Image
         key={images[index]}
         src={images[index]}
         alt={`${alt} ${index + 1}`}
         fill
-        className="object-cover transition-opacity duration-300"
+        sizes="(min-width: 640px) 42rem, 100vw"
+        className="object-cover"
       />
-      <div className="absolute inset-0 bg-gray-100/5" />
 
-      {/* Click-to-expand overlay */}
       {onExpand && (
         <button
           type="button"
           aria-label="Expand image"
           onClick={onExpand}
-          className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100"
+          className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
         >
-          <span className="flex items-center gap-1.5 rounded-lg border border-white/30 bg-black/55 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
-            Click to expand
+          <span className="font-mono border border-white/25 bg-black/60 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-white backdrop-blur-sm">
+            Expand
           </span>
         </button>
       )}
@@ -77,7 +76,7 @@ function ImageCarousel({
             type="button"
             aria-label="Previous image"
             onClick={onPrev}
-            className="absolute left-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 group-hover:opacity-100"
+            className={`${overlayButton} absolute left-2 top-1/2 -translate-y-1/2`}
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -85,27 +84,26 @@ function ImageCarousel({
             type="button"
             aria-label="Next image"
             onClick={onNext}
-            className="absolute right-2 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-black/50 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 group-hover:opacity-100"
+            className={`${overlayButton} absolute right-2 top-1/2 -translate-y-1/2`}
           >
             <ChevronRight className="h-4 w-4" />
           </button>
 
-          {/* Counter */}
-          <div className="absolute bottom-3 right-3 rounded-md border border-white/20 bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+          <span className="font-mono absolute bottom-3 right-3 border border-white/20 bg-black/55 px-2 py-0.5 text-[10px] tracking-[0.1em] text-white backdrop-blur-sm">
             {index + 1} / {images.length}
-          </div>
+          </span>
 
-          {/* Dot indicators */}
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1">
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
             {images.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 aria-label={`Go to image ${i + 1}`}
                 onClick={() => onDotClick(i)}
-                className={`h-1.5 rounded-full transition-all duration-200 ${
-                  i === index ? 'w-4 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
+                className={`transition-all duration-300 ${
+                  i === index ? 'w-6 bg-lily' : 'w-3 bg-white/45 hover:bg-white/80'
                 }`}
+                style={{ height: 2 }}
               />
             ))}
           </div>
@@ -124,15 +122,14 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
     [projectId, projects],
   );
 
-  const dialogImages = useMemo(() => {
-    if (!activeProject) return [];
-    return activeProject.images;
-  }, [activeProject]);
+  const dialogImages = useMemo(() => activeProject?.images ?? [], [activeProject]);
+
+  /** Mini builds carry only the basics; everything else is case-study-only. */
+  const caseStudy = activeProject && isFullProject(activeProject) ? activeProject : null;
 
   function handleDetailOpenChange(open: boolean) {
     if (!open) {
       onClose();
-      // Reset index for next open
       setDialogImageIndex(0);
     }
   }
@@ -153,26 +150,34 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
 
   return (
     <>
-      {/* ── Project detail dialog ── */}
       <Dialog open={Boolean(activeProject)} onOpenChange={handleDetailOpenChange}>
-        <DialogContent className="sm:max-w-3xl surface-card max-h-[75vh] overflow-y-auto rounded-xl border border-border/70 p-6 shadow-lg">
+        <DialogContent className="surface-card max-h-[82vh] overflow-y-auto p-0 sm:max-w-3xl">
           {activeProject && (
             <>
-              <DialogHeader>
-                <div className="mb-2 flex items-center gap-2">
-                  <span className="pill-chip">{activeProject.year}</span>
-                  {'role' in activeProject && (
-                    <span className="pill-chip">{activeProject.role}</span>
-                  )}
-                </div>
-                <DialogTitle className="text-2xl">{activeProject.title}</DialogTitle>
-                <DialogDescription className="text-sm leading-relaxed">
-                  {activeProject.subtitle ? `${activeProject.subtitle} - ` : ''}
-                  {activeProject.description}
-                </DialogDescription>
-              </DialogHeader>
+              {/* Header band, tinted like the petal base */}
+              <div
+                className="border-b border-border/70 p-6 sm:p-8"
+                style={{
+                  background:
+                    'linear-gradient(180deg, color-mix(in srgb, var(--wine) 22%, transparent), transparent)',
+                }}
+              >
+                <DialogHeader className="space-y-0 text-left">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="pill-chip pill-chip-lily">{activeProject.year}</span>
+                    {caseStudy && <span className="pill-chip">{caseStudy.role}</span>}
+                  </div>
+                  <DialogTitle className="font-display mt-4 text-3xl leading-tight tracking-tight">
+                    {activeProject.title}
+                  </DialogTitle>
+                  <DialogDescription className="mt-3 text-sm leading-[1.85] text-muted-foreground">
+                    {activeProject.subtitle ? `${activeProject.subtitle} — ` : ''}
+                    {activeProject.description}
+                  </DialogDescription>
+                </DialogHeader>
+              </div>
 
-              <div className="space-y-4">
+              <div className="space-y-8 p-6 sm:p-8">
                 <ImageCarousel
                   images={dialogImages}
                   index={dialogImageIndex}
@@ -186,40 +191,55 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
                   className="h-72"
                 />
 
-                <div>
-                  <h4 className="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                    Key responsibilities
-                  </h4>
-                  <ul className="mt-2 space-y-2">
-                    {'responsibilities' in activeProject && activeProject.responsibilities.map((r) => (
-                      <li key={r} className="flex items-start gap-2 text-sm text-foreground/90">
-                        <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground" />
-                        {r}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {caseStudy && (
+                  <p className="border-l-2 border-lily pl-4 text-[15px] leading-[1.8] text-foreground/90">
+                    {caseStudy.impact}
+                  </p>
+                )}
 
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-xl border border-border/70 bg-card/70 p-3">
-                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                      Challenge
-                    </p>
-                    {'challenge' in activeProject && (
-                      <p className="mt-1 text-sm text-foreground/90">{activeProject.challenge}</p>
-                    )}
+                {caseStudy && (
+                  <div>
+                    <h4 className="font-mono text-[10px] uppercase tracking-[0.28em] text-lily">
+                      What I did
+                    </h4>
+                    <ul className="mt-4 space-y-3">
+                      {caseStudy.responsibilities.map((r, i) => (
+                        <li
+                          key={r}
+                          className="flex items-start gap-4 border-b border-border/50 pb-3 last:border-0 last:pb-0"
+                        >
+                          <span className="font-mono mt-0.5 shrink-0 text-[10px] tracking-[0.16em] text-ash">
+                            {String(i + 1).padStart(2, '0')}
+                          </span>
+                          <span className="text-sm leading-[1.8] text-foreground/90">{r}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <div className="rounded-xl border border-border/70 bg-card/70 p-3">
-                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                      Solution
-                    </p>
-                    {'solution' in activeProject && (
-                      <p className="mt-1 text-sm text-foreground/90">{activeProject.solution}</p>
-                    )}
-                  </div>
-                </div>
+                )}
 
-                <div className="flex flex-wrap gap-2">
+                {caseStudy && (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="border border-border/70 p-5">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-ash">
+                        The problem
+                      </p>
+                      <p className="mt-3 text-sm leading-[1.8] text-foreground/90">
+                        {caseStudy.challenge}
+                      </p>
+                    </div>
+                    <div className="border border-lily/35 bg-lily/[0.04] p-5">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-lily">
+                        What I built
+                      </p>
+                      <p className="mt-3 text-sm leading-[1.8] text-foreground/90">
+                        {caseStudy.solution}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap gap-1.5">
                   {activeProject.tags.map((tag) => (
                     <span key={tag} className="pill-chip">
                       {tag}
@@ -235,7 +255,7 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
                     className="btn-secondary"
                   >
                     <Github className="h-4 w-4" />
-                    GitHub repository
+                    Source
                   </a>
                   {activeProject.demoUrl ? (
                     <a
@@ -248,13 +268,12 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
                       Live demo
                     </a>
                   ) : (
-                    <button
-                      disabled
-                      className="inline-flex cursor-not-allowed items-center justify-center gap-1 rounded-lg border border-border bg-card/50 px-3 py-2 text-xs font-semibold text-muted-foreground"
+                    <span
+                      className="font-mono inline-flex cursor-not-allowed items-center justify-center gap-2 border border-border/50 px-7 py-3.5 text-[13px] uppercase tracking-[0.16em] text-ash/60"
+                      style={{ borderRadius: 'var(--radius)' }}
                     >
-                      <ExternalLink className="h-4 w-4" />
-                      Unavailable
-                    </button>
+                      Not deployed
+                    </span>
                   )}
                 </div>
               </div>
@@ -263,7 +282,7 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
         </DialogContent>
       </Dialog>
 
-      {/* ── Lightbox — second Radix Dialog stacked above the detail dialog ── */}
+      {/* ── Lightbox — a second dialog stacked above the detail view ── */}
       <Dialog
         open={Boolean(lightbox)}
         onOpenChange={(open) => {
@@ -271,7 +290,7 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
         }}
       >
         <DialogContent
-          className="flex max-w-[95vw] sm:max-w-[70vw] min-h-[50vh] sm:min-h-[80vh] flex-col items-center gap-2 sm:gap-4 border-0 bg-transparent p-2 sm:p-4 shadow-none text-foreground"
+          className="flex max-w-[95vw] flex-col items-center gap-4 border-0 bg-transparent p-2 shadow-none sm:max-w-[74vw] sm:p-4"
           showCloseButton={false}
         >
           <DialogTitle className="sr-only">
@@ -281,63 +300,55 @@ export function ProjectDetailDialog({ projectId, projects, onClose }: ProjectDet
 
           {lightbox && (
             <>
-              <div className="relative flex w-full sm:w-fit min-h-[40vh] sm:min-h-190 top-6 sm:top-11.5 items-center justify-center overflow-hidden rounded-lg bg-black/60 p-1 sm:p-2">
+              <div className="relative flex w-full items-center justify-center border border-border/50 bg-black/70 p-2">
                 <Image
                   key={lightbox.images[lightbox.index]}
                   src={lightbox.images[lightbox.index]}
                   alt={`Screenshot ${lightbox.index + 1}`}
-                  width={1200}
-                  height={800}
-                  className="object-contain max-h-[60vh] sm:max-h-none w-auto"
+                  width={1600}
+                  height={1000}
+                  className="max-h-[72vh] w-auto object-contain"
                 />
               </div>
 
               {lightbox.images.length > 1 && (
-                <div className="absolute inset-0 flex items-center justify-between gap-2 sm:gap-4 px-1 sm:px-12">
-                  <div
-                    className="flex items-center gap-2 h-full group cursor-pointer"
+                <div className="flex items-center gap-5">
+                  <button
+                    type="button"
+                    aria-label="Previous image"
                     onClick={lightboxPrev}
+                    className="flex h-10 w-10 items-center justify-center border border-border bg-background/70 text-foreground transition-colors hover:border-lily hover:text-lily"
                   >
-                    <button
-                      type="button"
-                      aria-label="Previous image"
-                      className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full text-foreground transition-colors bg-background/60 sm:bg-background/50 hover:bg-background/80 group-hover:bg-background/80 cursor-pointer"
-                    >
-                      <ChevronLeft className="h-5 w-5 sm:h-8 sm:w-8" />
-                    </button>
-                  </div>
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
 
-                  <div className="absolute bottom-10 sm:bottom-16 left-1/2 transform -translate-x-1/2 flex gap-1 sm:gap-1.5 bg-background/80 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg">
+                  <div className="flex gap-1.5">
                     {lightbox.images.map((_, i) => (
                       <button
                         key={i}
                         type="button"
                         aria-label={`Go to image ${i + 1}`}
                         onClick={() => setLightbox((lb) => (lb ? { ...lb, index: i } : null))}
-                        className={`h-1.5 sm:h-2 rounded-full transition-all duration-200 ${
-                          i === lightbox.index
-                            ? 'w-4 sm:w-6 bg-foreground'
-                            : 'w-1.5 sm:w-2 bg-foreground/40 hover:bg-foreground/70'
+                        className={`transition-all duration-300 ${
+                          i === lightbox.index ? 'w-7 bg-lily' : 'w-3 bg-foreground/35'
                         }`}
+                        style={{ height: 2 }}
                       />
                     ))}
                   </div>
-                  <div
-                    className="flex items-center gap-2 h-full group cursor-pointer"
+
+                  <button
+                    type="button"
+                    aria-label="Next image"
                     onClick={lightboxNext}
+                    className="flex h-10 w-10 items-center justify-center border border-border bg-background/70 text-foreground transition-colors hover:border-lily hover:text-lily"
                   >
-                    <button
-                      type="button"
-                      aria-label="Next image"
-                      className="flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-full text-foreground transition-colors bg-background/60 sm:bg-background/50 hover:bg-background/80 group-hover:bg-background/80 cursor-pointer"
-                    >
-                      <ChevronRight className="h-5 w-5 sm:h-8 sm:w-8" />
-                    </button>
-                  </div>
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
                 </div>
               )}
 
-              <p className="text-[10px] sm:text-xs font-semibold text-foreground/50">
+              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-ash">
                 {lightbox.index + 1} / {lightbox.images.length}
               </p>
             </>

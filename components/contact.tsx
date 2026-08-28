@@ -2,23 +2,40 @@
 
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
+import { Lily } from '@/components/lily';
+import { Spine } from '@/components/spine';
+
+const links = [
+  { label: 'GitHub', handle: '@Zero0blanK', href: 'https://github.com/Zero0blanK' },
+  {
+    label: 'LinkedIn',
+    handle: 'april-bords-nerosa',
+    href: 'https://www.linkedin.com/in/april-bords-nerosa-41a17336b/',
+  },
+  {
+    label: 'Facebook',
+    handle: 'aprilbords.nerosa',
+    href: 'https://www.facebook.com/aprilbords.nerosa',
+  },
+];
 
 export function Contact() {
-  const [time, setTime] = useState<string>('');
-  const [phHour, setPhHour] = useState<number>(12);
+  const [time, setTime] = useState('');
+  const [phHour, setPhHour] = useState(12);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const updateTime = () => {
       const phNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
-      const estTime = phNow.toLocaleString('en-US', {
-        timeZone: 'Asia/Manila',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      });
-      setTime(estTime);
+      setTime(
+        phNow.toLocaleString('en-US', {
+          timeZone: 'Asia/Manila',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        }),
+      );
       setPhHour(phNow.getHours());
     };
 
@@ -27,62 +44,74 @@ export function Contact() {
     return () => clearInterval(interval);
   }, []);
 
-  const getAvailabilityStatus = () => {
-    if (!mounted) return { available: true, label: 'Available' };
-    const isBusinessHours = phHour >= 9 && phHour < 17;
-    return {
-      available: isBusinessHours,
-      label: isBusinessHours ? 'Available for new projects' : 'Offline, replying next business day',
-    };
-  };
-
-  const status = getAvailabilityStatus();
+  const atDesk = mounted && phHour >= 9 && phHour < 17;
 
   const container = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15 },
-    },
+    visible: { opacity: 1, transition: { staggerChildren: 0.12 } },
   };
 
   const item = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6 },
-    },
+    hidden: { opacity: 0, y: 22 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as const } },
   };
 
   return (
-    <section id="contact" className="section-shell pb-16 sm:pb-20">
-      <div className="section-inner">
+    <Spine
+      id="contact"
+      kanji="岸"
+      eyebrow="Shore"
+      cap="end"
+      title="Say something first."
+      copy={
+        <>
+          <span className="font-display">彼岸</span> is the far bank — the shore on the other side.
+          Crossing it only takes an email. I read every one, and I answer the ones about building
+          things.
+        </>
+      }
+    >
+
         <motion.div
           variants={container}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          className="surface-card relative overflow-hidden p-6 sm:p-10"
+          viewport={{ once: true, margin: '-90px' }}
+          className="relative mt-14 grid gap-5 lg:grid-cols-[1.25fr_0.75fr]"
         >
-          <div className="absolute -left-12 top-0 h-56 w-56 rounded-full bg-(--brand) opacity-20 blur-3xl" />
-          <div className="absolute -bottom-16 right-0 h-56 w-56 rounded-full bg-cyan-300/25 blur-3xl dark:bg-cyan-400/15" />
+          <motion.div variants={item} className="surface-card relative overflow-hidden p-8 sm:p-12">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -bottom-24 -right-16 w-96 text-lily/[0.06]"
+            >
+              <Lily className="h-auto w-full" weight={1.6} />
+            </div>
 
-          <div className="relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-            <motion.div variants={item}>
-              <span className="section-label">Let&apos;s build something exceptional</span>
-              <h2 className="mt-5 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-                Ready to turn your next idea into a high-performing digital product?
-              </h2>
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                I partner with teams that value intentional design, robust engineering, and product
-                decisions grounded in outcomes.
+            <div className="relative">
+              <a
+                href="mailto:aprilbords.n@gmail.com"
+                className="font-display group inline-block text-2xl leading-tight text-foreground transition-colors hover:text-lily sm:text-4xl"
+              >
+                aprilbords.n@gmail.com
+                <span
+                  aria-hidden
+                  className="mt-2 block h-px w-full origin-left scale-x-[0.45] transition-transform duration-500 ease-out group-hover:scale-x-100"
+                  style={{
+                    background:
+                      'linear-gradient(90deg, var(--lily), color-mix(in srgb, var(--lily) 10%, transparent))',
+                  }}
+                />
+              </a>
+
+              <p className="mt-7 max-w-lg leading-[1.85] text-muted-foreground">
+                Open to internships, junior full-stack roles, and project collaborations. If you
+                have a brief, send it — if you only have a problem, send that instead.
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-9 flex flex-wrap gap-3">
                 <a href="mailto:aprilbords.n@gmail.com" className="btn-primary">
                   Send an email
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -92,65 +121,65 @@ export function Contact() {
                   </svg>
                 </a>
                 <a
-                  href="https://www.linkedin.com/in/april-bords-nerosa-41a17336b/"
+                  href="/CV-April-Bords-Nerosa.pdf"
+                  download="CV-April-Bords-Nerosa.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-secondary"
                 >
-                  Connect on LinkedIn
+                  Download CV
                 </a>
               </div>
-            </motion.div>
+            </div>
+          </motion.div>
 
-            <motion.div variants={item} className="glass-card p-6">
-              <p className="text-sm font-semibold uppercase tracking-[0.15em] text-muted-foreground">
-                Availability
+          <motion.div variants={item} className="surface-card flex flex-col p-8">
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-ash">Status</p>
+
+            <div className="mt-5 flex items-center gap-3">
+              <span
+                className={`h-1.5 w-1.5 shrink-0 rounded-full ${atDesk ? 'animate-pulse' : ''}`}
+                style={{ background: atDesk ? 'var(--stem)' : 'var(--ash)' }}
+              />
+              <p className="text-sm leading-snug text-foreground">
+                {atDesk ? 'At the desk now' : 'Away — replies next business day'}
               </p>
-              <div className="mt-4 flex items-center gap-2">
-                <span
-                  className={`h-2.5 w-2.5 rounded-full ${status.available ? 'bg-emerald-500 animate-pulse' : 'bg-amber-400'}`}
-                />
-                <p className="text-sm font-medium text-foreground">{status.label}</p>
-              </div>
-              {mounted && <p className="mt-2 text-sm text-muted-foreground">{time} (Philippines)</p>}
+            </div>
 
-              <div className="mt-6 space-y-2 border-t border-border/70 pt-6 text-sm text-muted-foreground">
+            {mounted && (
+              <p className="font-mono mt-3 text-[11px] uppercase tracking-[0.2em] text-ash">
+                {time} · Davao, PH (UTC+8)
+              </p>
+            )}
+
+            <div className="mt-8 space-y-px border-t border-border/70 pt-2">
+              {links.map((link) => (
                 <a
-                  href="https://www.facebook.com/aprilbords.nerosa"
+                  key={link.label}
+                  href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-lg px-2 py-1 transition-colors hover:bg-secondary/80 hover:text-foreground"
+                  className="group flex items-baseline justify-between border-b border-border/60 py-3 transition-colors"
                 >
-                  Facebook
-                  <span aria-hidden>{'->'}</span>
+                  <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-foreground/85 transition-colors group-hover:text-lily">
+                    {link.label}
+                  </span>
+                  <span className="font-mono text-[10px] tracking-[0.06em] text-ash transition-transform duration-300 group-hover:-translate-x-0.5">
+                    {link.handle}
+                  </span>
                 </a>
-                <a
-                  href="https://github.com/Zero0blanK"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-lg px-2 py-1 transition-colors hover:bg-secondary/80 hover:text-foreground"
-                >
-                  GitHub
-                  <span aria-hidden>{'->'}</span>
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/april-bords-nerosa-41a17336b/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-lg px-2 py-1 transition-colors hover:bg-secondary/80 hover:text-foreground"
-                >
-                  LinkedIn
-                  <span aria-hidden>{'->'}</span>
-                </a>
-              </div>
-            </motion.div>
-          </div>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
 
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          &copy; 2026 April Bords M. Nerosa. Designed and built with intention.
-        </p>
-      </div>
-    </section>
+        <div className="mt-20 flex items-center gap-5 border-t border-border/70 pt-7">
+          <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-ash">
+            © 2026 April Bords M. Nerosa
+          </p>
+          <span aria-hidden className="h-px flex-1 bg-border/70" />
+          <span className="font-display text-sm text-lily/70">彼岸花</span>
+        </div>
+    </Spine>
   );
 }
